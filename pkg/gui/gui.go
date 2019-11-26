@@ -67,20 +67,21 @@ type Teml i18n.Teml
 
 // Gui wraps the gocui Gui object which handles rendering and events
 type Gui struct {
-	g             *gocui.Gui
-	Log           *logrus.Entry
-	GitCommand    *commands.GitCommand
-	OSCommand     *commands.OSCommand
-	SubProcess    *exec.Cmd
-	State         guiState
-	Config        config.AppConfigurer
-	Tr            *i18n.Localizer
-	Errors        SentinelErrors
-	Updater       *updates.Updater
-	statusManager *statusManager
-	credentials   credentials
-	waitForIntro  sync.WaitGroup
-	fileWatcher   *fsnotify.Watcher
+	g              *gocui.Gui
+	Log            *logrus.Entry
+	GitCommand     *commands.GitCommand
+	OSCommand      *commands.OSCommand
+	SubProcess     *exec.Cmd
+	State          guiState
+	Config         config.AppConfigurer
+	Tr             *i18n.Localizer
+	Errors         SentinelErrors
+	Updater        *updates.Updater
+	statusManager  *statusManager
+	credentials    credentials
+	waitForIntro   sync.WaitGroup
+	fileWatcher    *fsnotify.Watcher
+	encodedStrings utils.EncodedStrings
 }
 
 // for now the staging panel state, unlike the other panel states, is going to be
@@ -741,10 +742,10 @@ func (gui *Gui) renderAppStatus() error {
 func (gui *Gui) renderGlobalOptions() error {
 	return gui.renderOptionsMap(map[string]string{
 		"PgUp/PgDn": gui.Tr.SLocalize("scroll"),
-		"← → ↑ ↓":   gui.Tr.SLocalize("navigate"),
-		"esc/q":     gui.Tr.SLocalize("close"),
-		"x":         gui.Tr.SLocalize("menu"),
-		"1-5":       gui.Tr.SLocalize("jump"),
+		fmt.Sprintf("%s %s %s %s", gui.encodedStrings.LeftArrow, gui.encodedStrings.RightArrow, gui.encodedStrings.UpArrow, gui.encodedStrings.DownArrow): gui.Tr.SLocalize("navigate"),
+		"esc/q": gui.Tr.SLocalize("close"),
+		"x":     gui.Tr.SLocalize("menu"),
+		"1-5":   gui.Tr.SLocalize("jump"),
 	})
 }
 
@@ -786,6 +787,8 @@ func (gui *Gui) Run() error {
 	}
 
 	gui.g = g // TODO: always use gui.g rather than passing g around everywhere
+
+	gui.prepareEncodings()
 
 	if err := gui.setColorScheme(); err != nil {
 		return err

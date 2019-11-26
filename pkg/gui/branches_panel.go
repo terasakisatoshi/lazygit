@@ -55,7 +55,7 @@ func (gui *Gui) handleBranchSelect(g *gocui.Gui, v *gocui.View) error {
 		if err != nil && strings.HasPrefix(graph, "fatal: ambiguous argument") {
 			graph = gui.Tr.SLocalize("NoTrackingThisBranch")
 		}
-		_ = gui.renderString(g, "main", fmt.Sprintf("%s → %s\n\n%s", utils.ColoredString(branch.Name, color.FgGreen), utils.ColoredString(upstream, color.FgRed), graph))
+		_ = gui.renderString(g, "main", fmt.Sprintf("%s %s %s\n\n%s", utils.ColoredString(branch.Name, color.FgGreen), gui.encodedStrings.RightArrow, utils.ColoredString(upstream, color.FgRed), graph))
 	}()
 	return nil
 }
@@ -85,7 +85,7 @@ func (gui *Gui) refreshBranches(g *gocui.Gui) error {
 	}
 
 	g.Update(func(g *gocui.Gui) error {
-		builder, err := commands.NewBranchListBuilder(gui.Log, gui.GitCommand)
+		builder, err := commands.NewBranchListBuilder(gui.Log, gui.GitCommand, gui.encodedStrings)
 		if err != nil {
 			return err
 		}

@@ -5,6 +5,7 @@ package gui
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"math"
 	"os"
@@ -243,8 +244,8 @@ func (gui *Gui) scrollToConflict(g *gocui.Gui) error {
 
 func (gui *Gui) renderMergeOptions() error {
 	return gui.renderOptionsMap(map[string]string{
-		"↑ ↓":   gui.Tr.SLocalize("selectHunk"),
-		"← →":   gui.Tr.SLocalize("navigateConflicts"),
+		fmt.Sprintf("%s %s", gui.encodedStrings.UpArrow, gui.encodedStrings.DownArrow):    gui.Tr.SLocalize("selectHunk"),
+		fmt.Sprintf("%s %s", gui.encodedStrings.LeftArrow, gui.encodedStrings.RightArrow): gui.Tr.SLocalize("navigateConflicts"),
 		"space": gui.Tr.SLocalize("pickHunk"),
 		"b":     gui.Tr.SLocalize("pickBothHunks"),
 		"z":     gui.Tr.SLocalize("undo"),

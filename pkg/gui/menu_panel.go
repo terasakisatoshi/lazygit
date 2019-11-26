@@ -19,7 +19,7 @@ func (gui *Gui) handleMenuSelect(g *gocui.Gui, v *gocui.View) error {
 func (gui *Gui) renderMenuOptions() error {
 	optionsMap := map[string]string{
 		"esc/q": gui.Tr.SLocalize("close"),
-		"↑ ↓":   gui.Tr.SLocalize("navigate"),
+		fmt.Sprintf("%s %s", gui.encodedStrings.UpArrow, gui.encodedStrings.DownArrow): gui.Tr.SLocalize("navigate"),
 		"space": gui.Tr.SLocalize("execute"),
 	}
 	return gui.renderOptionsMap(optionsMap)
